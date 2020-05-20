@@ -1,8 +1,8 @@
 <!doctype html>
 <html class="no-js" lang="en">
     <head>
-        <title>{{site.name}} | {{page.title}}</title>
-        <meta name="description" content="{{site.name}} | {{page.title}}">
+        <title>{{site.title}} | {{page.title}}</title>
+        <meta name="description" content="{{site.title}} | {{page.title}}">
         <meta name="keywords" content="">
         <meta charset="utf-8">
         <meta name="author" content="{{page.author}}">
@@ -84,7 +84,7 @@
                     <!-- content  -->
                     <div class="col-md-5 col-sm-12 blog-headline position-relative">
                         <!-- post title  -->
-                        <h2 class="blog-single-full-width-with-image-slider-headline text-black">${{page.title}} -  ${{page.summary}}</h2>
+                        <h2 class="blog-single-full-width-with-image-slider-headline text-black">{{page.title}} -  {{page.summary}}</h2>
                         <!-- end post title  -->
                         <!-- Posted by  -->
                         <span class="posted-by text-uppercase">Posted by - <a href="blog-masonry-3columns.html">{{page.author}}</a></span>
@@ -93,7 +93,7 @@
                         <div class="blog-date bg-black white-text text-center"><span>20</span>May</div>
                         <!-- end post date  -->
                         <!-- post categories  -->
-                        <div class="blog-cat text-uppercase"><a href="blog-masonry-3columns.html">Framework</a><a href="blog-masonry-3columns.html">Open Source</a><a href="blog-masonry-3columns.html">Go Lang</a><a href="blog-masonry-3columns.html">Service Mesh</a></div>
+                        <div class="blog-cat text-uppercase">{{page.tags}}</div>
                         <!-- end post categories  -->
                     </div>
                     <!-- slider  -->
