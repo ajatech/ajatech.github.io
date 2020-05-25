@@ -1,10 +1,12 @@
 ---
 title:  On Availability & Event Sourcing 
+day: 25
+month: May
 summary:  Introduction to Enterprise Events
 author: Raja Shankar Kolluru
 permalink:  events.html
 carousel1: images/ext/CQRS.png
-carousel2: images/ext/CQRS.png
+carousel2: images/ext/entity-mutation-with-events.png
 carousel3: images/ext/book-stack.jpg
 featured: images/ext/event.jpg
 tags: Events  DDD ThinEvents ThickEvents Messages RPC APIDesign CQRS Availability EventSourcing
@@ -16,7 +18,7 @@ We will start this post with a story of a big bad launch of software. There was 
 
 There were a lot of teams created - each responsible for their own piece of software. They developed their individual pieces, agreed on contracts amongst themselves, tested the pieces individually, assembled them together and waited with bated breath as they switched the integrated system to start. Nothing happened.  The damn thing did not come up. 
 
-Four nights of debugging and several coffees later, it was realized that there are too many nested calls between micro services. One micro service called another which called a third one and so on till the call stack started looking more like a tower of Babel. 
+Four nights of debugging and several coffees later, it was realized that there are too many nested calls between micro services. One micro service called another which called a third one and so on till the call stack started looking more like a tower of Babel. (look at the book stack in carousel 3 above)
 
 The biggest victim of this kind of indiscriminate call stacks is availability. As the call stack gets more and more nested, availability decreases dramatically. 
 To explore availability further, let us explore a typical situation in an enterprise application - wherein a client is trying to obtain some data from a server.
@@ -65,25 +67,62 @@ If a large enterprise were to send ETL feeds everywhere, will it make sense to r
 
 These are some of the questions that we will attempt to answer by stating some axioms of events:
 
-## First Axiom - Event Represents Change
-This might seem obvious but nevertheless bears stating. An event happens when there is a change in the system. There is no reason to emit an event if there is no change that has happened to the system. 
+## First Axiom - When should an event be sent?
+This axiom defines "when" the event gets sent. 
+> An event is sent when a change took place in a bounded context. 
+A bounded context represents a subdomain that has interesting entities in it. For example a product bounded context has Products in it. As and when things happen to a product, an event will get emitted by the product subdomain. 
 
-## Second Axiom - Event Represents an Axis of Change
+This might seem obvious but nevertheless bears stating. 
+
+## Second Axiom - What Changed?
+This axiom has to do with "what" changes an event represents. 
  Let us consider our product catalog example. A product catalog has multiple products. with attributes like name, description etc. Products are also associated with prices. 
  
- However, price and other product attributes have different axis of change. Prices change more often for a product than other attributes.  The stakeholders for price change are different from the stakeholders for addition of new products or for product change. Hence in most retail enterprises, there exist two bounded contexts - product and price domains.. Each domain has its own axis of change. 
+ However, price and other product attributes have different axis of change. Prices change more often for a product than other attributes.  The stakeholders for price change are different from the stakeholders for addition of new products or for product change. Hence in most retail enterprises, there exist two bounded contexts - product and price domains.. Each domain has its own axis of change. This axiom tells us what change the event represents.
 
-> An event represents one axis of change 
-> Corollary 1: An event precisely represents the changes occuring for one entity in a bounded context.
-> Corollary 2:  An event cannot be shared across bounded contexts.
+>  An event precisely represents the changes occuring for one entity or an [aggregate](https://martinfowler.com/bliki/DDD_Aggregate.html) in a [bounded context](https://www.infoq.com/news/2019/06/bounded-context-eric-evans/).
+> Corollary:  An event cannot be shared across bounded contexts.
 
 ### What is wrong if the event represents multiple axis of change? 
-Typically, this will cut across multiple bounded contexts and has the potential to cause disruption since the ownership of the event gets diluted. In this example, we would need a consolidating bounded context which unifies both price and product into one entity. This is possible and sometimes desirable as well. But this axiom makes it clear that there is work that needs to be done in unifying the required bounded contexts and generating the event.
+Typically, this will cut across multiple bounded contexts and has the potential to cause disruption since the ownership of the event gets diluted. In this example if changes in a product + price  must trigger events, then we would need a consolidating bounded context which unifies both price and product into one entity. This is possible and sometimes desirable as well. But this axiom makes it clear that there is work that needs to be done in unifying the required bounded contexts and generating the event.
 
-## Third Axiom - Event Size is proportional to the processing
-Events are one time affairs and are mappable to different things that happen to particular entities. Views represent 
+## Third Axiom - What is sent?
+This axiom deals with the content of the event. 
 
-(to be continued)
+ One school of thought is to send the new version of the entity - aka the new entity snapshot. For example, let us say that we are sending events  related to products in a product catalog. A product got created. So we send out an event containing the new product that got created. If the product is now mutated, we can then send the new mutated version of the product. 
+
+In this way, the systems downstream about the changes that happened to the entity but they dont have to be smart about incorporating these changes into their version of the entity. 
+
+An alternative theory is to send so called _thin events_. In this case, the first event namely product creation in our example, will send out the complete entity as before. However every event post that will only emit changes that are sufficient for data sources to update their version of the entity. This is illustrated in the second diagram in the carousel above. The first event sends out the complete entity whilst subsequent events will only send incremental changes to the entity. This means that the downstream systems that consume this event must be intelligent enough to understand it and mutate their version of the entity accordingly. This leads to the third axiom of events namely:
+> The thinner the event is, the more intelligent the consumer needs to be.
+
+## Fourth Axiom - Who sends the event out?
+> Sending an event type is the responsibility of one and only one bounded context
+
+In case more than one bounded context is responsible to send out an event, then this will imply that the entity (or aggregate) that is linked to the event is owned by more than one bounded context which violates the Domain Driven Design (DDD) principles. 
+
+## Fifth Axiom - Implicit vs. Explicit Events
+> Avoid expanding aggregate entities from other bounded contexts in your events
+ 
+ Let us take the example of a Christmas sale. The sale applies to a group of products - for example product 1 and product2. Instead of dealing with too many products, the product domain allows setting up product groups. In this case we can set up a product group PG1 that contains product1 and product2.  The sale itself is set up against PG1 (and not against product1 and product2 individually) as part of the Promotion bounded context. Now let us say, the promotion bounded context wants to send an event when a sale has been set up. It can choose to expand the product group to the constituent products when emitting out the event. Hence the promotion domain sends this event with product1 and product2 (by expanding the PG1 group into the constituent products). However, there is a problem with this.
+
+ This expansion of PG1 to product1 and product2 is applicable only at the time of sending the event. If PG1 were to be altered in the product domain and a new product called product3 was added to PG1, then the event consumers will not know about this change unless the promotion domain were to send out a new sale event for product3. But if you think about it, this can get quite hairy. The promotion domain is ending up sending events even though the actual event (i.e. adding product 3 to PG1) happened in the product domain and not within the promotion domain.
+
+ This could have been avoided if the promotion domain did not expand PG1 to product1 and product2 which is the statement of this axiom.
+
+But what if it is desired to have sale events at the product level even though they are set up at the product group level? Then we need to create a new subdomain which is responsible to emit this event.
+
+## Finally - Self Contained Events
+> Events must be self contained. There must be enough information in the event to act on it without needing an RPC call to the same bounded context.
+Remember, events are there to enhance availability. If events mandate RPC calls, then most of the problems with availability return back. Hence this should be avoided. 
+
+If these principles are followed, events can prove to be extremely beneficial.
+
+## In Summary
+1. Availability is paramount when designing enterprise systems. 
+2. Redundancy mitigates availability issues
+3. Redundancy implies event driven eventual consistency
+4. Events must be designed appropriately to take advantage of redundancy
 
 
 
