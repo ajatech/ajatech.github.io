@@ -87,10 +87,10 @@
                         <h2 class="blog-single-full-width-with-image-slider-headline text-black">{{page.title}} -  {{page.summary}}</h2>
                         <!-- end post title  -->
                         <!-- Posted by  -->
-                        <span class="posted-by text-uppercase">Posted by - <a href="blog-masonry-3columns.html">{{page.author}}</a></span>
+                        <span class="posted-by text-uppercase">Posted by - <a href="#">{{page.author}}</a></span>
                         <!-- end Posted by  -->
                         <!-- post date  -->
-                        <div class="blog-date bg-black white-text text-center"><span>{{page.day}}</span>{{page.month}}</div>
+                        <div class="blog-date bg-black white-text text-center"><span>{{page.day}}</span>{{page.month}}<br/>{{page.year}}</div>
                         <!-- end post date  -->
                         <!-- post categories  -->
                         <div class="blog-cat text-uppercase">{{page.tags}}</div>
@@ -134,13 +134,13 @@
                         <!-- end post details text -->
                         <!-- social icon -->
                         <div class="text-center border-bottom border-top margin-ten padding-four no-margin-bottom">
-                            <a href="https://www.facebook.com/share.php?u=http://itmusings.com/pblog/100architecture/100patterns/20080116-flow-orchestrations.htm&amp;t=command" class="btn social-icon social-icon-large button"><i class="fa fa-facebook"></i></a>
-                            <a href="https://twitter.com/intent/tweet?text=Flow Orchestrations&amp;original_referer=http://itmusings.com/pblog/100architecture/100patterns/20080116-flow-orchestrations.htm" class="btn social-icon social-icon-large button"><i class="fa fa-twitter"></i></a>
-                            <a href="https://www.google.com/bookmarks/mark?op=edit&bkmk=http://itmusings.com/pblog/100architecture/100patterns/20080116-flow-orchestrations.htm&amp;title=Flow Orchestrations&amp;annotation=Creating use case specific session facades from domain specific services." class="btn social-icon social-icon-large button"><i class="fa fa-google-plus"></i></a>
-                            <a href="https://www.tumblr.com/widgets/share/tool/preview?shareSource=legacy&url=http://itmusings.com/pblog/100architecture/100patterns/20080116-flow-orchestrations.htm&amp;title=Flow Orchestrations&amp;selection=Creating use case specific session facades from domain specific services.&amp;_format=html" class="btn social-icon social-icon-large button"><i class="fa fa-tumblr"></i></a>
-                            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://itmusings.com/pblog/100architecture/100patterns/20080116-flow-orchestrations.htm&amp;title=Flow Orchestrations&amp;source=http://itmusings.com/pblog/100architecture/100patterns/20080116-flow-orchestrations.htm&amp;summary=Creating use case specific session facades from domain specific services." class="btn social-icon social-icon-large button"><i class="fa fa-linkedin"></i></a>
-                            <a class="btn social-icon social-icon-large button" href="https://www.stumbleupon.com/badge?url=http://itmusings.com/pblog/100architecture/100patterns/20080116-flow-orchestrations.htm"><i class="fa fa-stumbleupon"></i></a>
-                            <a class="btn social-icon social-icon-large button" href="http://digg.com/submit?url=http://itmusings.com/pblog/100architecture/100patterns/20080116-flow-orchestrations.htm&amp;title=Flow Orchestrations"><i class="fa fa-digg"></i></a>
+                            <a href="https://www.facebook.com/share.php?u=http://ajatech.in/{{page.permalink}}&amp;t=command" class="btn social-icon social-icon-large button"><i class="fa fa-facebook"></i></a>
+                            <a href="https://twitter.com/intent/tweet?text={{page.title}}&amp;original_referer=http://ajatech.in/{{page.permalink}}" class="btn social-icon social-icon-large button"><i class="fa fa-twitter"></i></a>
+                            <a href="https://www.google.com/bookmarks/mark?op=edit&bkmk=http://ajatech.in/{{page.permalink}}&amp;title={{page.title}}&amp;annotation={{page.summary}}" class="btn social-icon social-icon-large button"><i class="fa fa-google-plus"></i></a>
+                            <a href="https://www.tumblr.com/widgets/share/tool/preview?shareSource=legacy&url=http://ajatech.in/{{page.permalink}}&amp;title={{page.title}}&amp;selection={{page.summary}}.&amp;_format=html" class="btn social-icon social-icon-large button"><i class="fa fa-tumblr"></i></a>
+                            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://ajatech.in/{{page.permalink}}&amp;title={{page.title}}&amp;source=http://ajatech.in/{{page.permalink}}&amp;summary={{page.summary}}" class="btn social-icon social-icon-large button"><i class="fa fa-linkedin"></i></a>
+                            <a class="btn social-icon social-icon-large button" href="https://www.stumbleupon.com/badge?url=http://ajatech.in/{{page.permalink}}"><i class="fa fa-stumbleupon"></i></a>
+                            <a class="btn social-icon social-icon-large button" href="http://digg.com/submit?url=http://ajatech.in/{{page.permalink}}&amp;title={{page.title}}"><i class="fa fa-digg"></i></a>
                         </div>
                         <!-- end social icon -->
                     </div>

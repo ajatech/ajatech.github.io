@@ -2,6 +2,7 @@
 title:  On Availability & Event Sourcing 
 day: 25
 month: May
+year: 2020
 summary:  Introduction to Enterprise Events
 author: Raja Shankar Kolluru
 permalink:  events.html
@@ -70,6 +71,7 @@ These are some of the questions that we will attempt to answer by stating some a
 ## Axiom 1 - When should an event be sent?
 This axiom defines "when" the event gets sent. 
 > An event is sent when a change took place in a bounded context. 
+
 A bounded context represents a subdomain that has interesting entities in it. For example a product bounded context has Products in it. As and when things happen to a product, an event will get emitted by the product subdomain. 
 
 What this means is that there is a relationship between actions happening in the bounded context and the events being sent. What this also means is that if there is no change in the bounded context then there must be  no event sent out. You might say that this is really  obvious! But as we discuss further we will realize why this is  important.
