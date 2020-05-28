@@ -116,6 +116,7 @@ But what if it is desired to have sale events at the product level even though t
 
 ## Axiom 6 - Self Contained Events
 > Events must be self contained. There must be enough information in the event to act on it without needing an RPC call to the same bounded context.
+
 Remember, events are there to enhance availability. If events mandate RPC calls, then most of the problems with availability return back. Hence this should be avoided. 
 
 If these principles are followed, events can prove to be extremely beneficial.
