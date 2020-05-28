@@ -102,7 +102,7 @@ ul, ol, dl {list-style-position: outside;}
 h1, h2, h3, h4, h5 { text-transform: uppercase; margin:0; padding:0; color: #000; }
 h1 { font-weight:700; line-height: 45px}
 h2 { font-size:24px; font-weight:400; letter-spacing:inherit; line-height: 30px}
-h3 { font-size:14px; letter-spacing:inherit; font-weight:700; }
+h3 { font-size:17px; letter-spacing:inherit; font-weight:700; }
 h4 { letter-spacing: 0px; font-weight:400; text-transform:none; font-size:16px; line-height: 26px}
 h5 { letter-spacing: 2px; font-weight:600; font-size:11px}
 h6 { font-family: 'Open Sans', sans-serif; letter-spacing: 1px; font-size: 13px; font-weight: 400; line-height: 20px}
@@ -1143,7 +1143,7 @@ footer ul.list-inline li:first-child {padding-left: 6px}
 
 /* blog details */
 .blog-details-headline{ font-size:18px; font-weight:600; letter-spacing:3px; padding-bottom:5px }
-.blog-details-text p { margin-bottom:35px; font-size:14px; line-height:28px;}
+.blog-details-text p { margin-bottom:35px; font-size:18px; line-height:28px;}
 .blog-details-text blockquote { margin: 15px 0 50px 0}
 .blog-comment { margin:30px 0; font-size:14px; line-height:28px;}
 .blog-comment .comment-avtar { float: left; max-width: 100px; margin-right:35px; margin-top:10px; }
@@ -1152,6 +1152,9 @@ footer ul.list-inline li:first-child {padding-left: 6px}
 .blog-comment-form-main { padding-top:6%}
 .about-author { display: inline-block; padding: 35px; width: 100%;}
 .about-author-text { font-size:13px; line-height:25px;}
+blockquote{
+    font-weight: bold;
+}
 
 /* blog single full width */
 .full-width-headline h2 { font-family:'Oswald', sans-serif; font-size:40px; font-weight:100; line-height:55px; margin-top:300px;}
