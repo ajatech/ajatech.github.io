@@ -72,7 +72,7 @@ These are some of the questions that we will attempt to answer by stating what I
 > All events are immutable i.e. the same event will never ever be repeated 
 
 This axiom guarantees that once an event is processed by an event consumer, then the effect of the processing will never need to be undone. New events might reverse the affect of an earlier event. However, the existing event  stays processed. Its effect is never undone.
-Example: Let us say that  every bank transaction in a savings bank account is sent as an event downstream. An event consumer would, for example, process a INR 100  Debit. If it turns out that the transaction amount is actually 120 INR instead, then two  new events get sent - one reverses the 100 INR Dr and the other one does the 120 INR Cr. The new event will never mutate the earlier one. 
+Example: Let us say that  every bank transaction in a savings bank account is sent as an event downstream. Let us also suppose that there was an event for INR 100 Dr. that is already sent. Subsequently it was realized that the event was sent in error and it should actually be INR 120 Dr. Now two events will be sent one for INR 100 Cr. followed by INR 120 Dr.  The new event will never mutate the earlier one. 
 
 ## Axiom 2 - When should an event be sent?
 This axiom defines "when" the event gets sent. 
