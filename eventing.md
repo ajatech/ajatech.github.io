@@ -34,11 +34,11 @@ Two important paradigms within the client-server interaction model are RPC and M
  Remote Procedure Call (RPC)  operates on a synchronous request-response paradigm. RPC clients and server are temporally connected i.e. both need to be up and running at the time of making the call. If the server were down, the client will need some kind of circuit breaker pattern to retry till such time the server is available.
 
 ###  Messaging
-In this paradigm, a highly available message broker  intermediates interactions between the client and the server thereby breaking the need for the temporal relationship between them.  However this still does not mitigate the relationship between the client and the server. 
+In this paradigm, a highly available message broker  intermediates interactions between the client and the server thereby breaking the need for the temporal relationship between them.  However this still does not mitigate the temporal relationship between the client and the server. 
 The client  processing is still tied to receiving a response from the server.   If the server is unavailable for 20 minutes, the product catalog, for all intents and purposes,  is unavailable for the same amount of time. So the availability problem persists - albeit without the need for circuit breakers and the like. 
 
 ## Bringing Data Closer to the Client
-The best way to break the availability problem is to create a redundant source of data.   The redundant data source services the client even if the server is available. This hugely increases the availability and in the process buys us considerable freedom. We can structure the data as per the retrieval needs of the client. So we not only address the availability problem but have considerably increased the performance of the application. 
+The best way to break the availability problem is to create a redundant source of data.   The redundant data source services the client even if the server is not available. This hugely increases the availability and in the process buys us considerable freedom. We can structure the data as per the retrieval needs of the client. So we not only address the availability problem but have considerably increased the performance of the application. 
 
 We can go crazy and push the data for every client in the enterprise thereby cluttering the enterprise with the same data everywhere. For example, we can create miniature replicas of the product catalog in every system in the enterprise. Alternately we can stipulate some designated sources for this data - anyone who needs the data must tap into one of these designated sources. 
 
@@ -70,7 +70,7 @@ These are some of the questions that we will attempt to answer by stating some a
 
 ## Axiom 1 - When should an event be sent?
 This axiom defines "when" the event gets sent. 
-> An event is sent when a change took place in a bounded context. 
+> An event is sent when a change takes place in a [bounded context](https://www.infoq.com/news/2019/06/bounded-context-eric-evans/). 
 
 A bounded context represents a subdomain that has interesting entities in it. For example a product bounded context has Products in it. As and when things happen to a product, an event will get emitted by the product subdomain. 
 
@@ -80,15 +80,15 @@ What this means is that there is a relationship between actions happening in the
 This axiom has to do with "what" changes an event represents. 
  Let us consider our product catalog example. A product catalog has multiple products with attributes like name, description etc. Products are also associated with prices. 
  
- However, price and other product attributes have different axis of change. Prices change more often for a product than other attributes.  The stakeholders for price change are different from the stakeholders for addition of new products or for product change. Hence in most retail enterprises, there exist two bounded contexts - product and price domains.. Each domain has its own axis of change. This axiom tells us what change the event represents.
+ However, price and other product attributes have different axis of change. Prices change more often for a product than other attributes.  The stakeholders for price change are different from the stakeholders for addition of new products or for product change. Hence in most retail enterprises, there exist two bounded contexts - Product and Price. Each domain or bounded context has its own axis of change. This axiom tells us what change the event represents.
 
 >  An event precisely represents the changes occuring for one entity or an [aggregate](https://martinfowler.com/bliki/DDD_Aggregate.html) in a [bounded context](https://www.infoq.com/news/2019/06/bounded-context-eric-evans/).
 > Corollary:  An event cannot be shared across bounded contexts.
 
-So, in the example above, price must have its own set of events (PriceChanged for example) and Product must have its own set of events. Emission of price events is the responsibility of the price domain and emission of product events is the responsibility of the product domain.
+So, in the example above, price must have its own set of events (PriceChanged for example) and Product must have its own set of events. Emission of price events is the responsibility of the Price domain and emission of product events is the responsibility of the Product domain.
 
 ### What is wrong if the event represents multiple axis of change? 
-Typically, this will cut across multiple bounded contexts and has the potential to cause disruption since the ownership of the event gets diluted. In this example if changes in a product + price  must trigger events, then we would need a consolidating bounded context which unifies both price and product into one entity. This is possible and sometimes desirable as well. But this axiom makes it clear that there is work that needs to be done in unifying the required bounded contexts and generating the event.
+Typically, this will cut across multiple bounded contexts and has the potential to cause disruption since the ownership of the event gets diluted. In this example, if a client desires that she needs to be notified if anything changes in a product - whether it is a product attribute or product price - then it is not possible if the Price domain is distinct from the Product domain. We would need a consolidating bounded context which unifies both price and product into one entity. This is possible and sometimes desirable as well. But this axiom makes it clear that there is work that needs to be done in unifying the required bounded contexts and generating the event.
 
 ## Axiom 3 - What is sent?
 This axiom deals with the content of the event. 
@@ -105,7 +105,22 @@ An alternative theory is to send so called _thin events_. In this case, the firs
 
 In case more than one bounded context is responsible to send out an event, then this will imply that the entity (or aggregate) that is linked to the event is owned by more than one bounded context which violates  Domain Driven Design (DDD) principles. 
 
-## Axiom 5- Implicit vs. Explicit Events
+## Axiom 5 - Who receives the event?
+> The event must be received by someone who is authorized to receive it - in terms of both event projection and event timing
+
+ Let us examine the two types of restrictions that are applicable for event consumers in turn.
+
+### Projection Restriction
+This has to do with the number of columns an event consumer is authorized to see. For example, product cost might be restricted to most teams. Only teams responsible for P&L such as finance might be authorized to see this information. 
+Since events are not consumer-aware i.e. the same event is sent to all the consumers, the only way to achieve this restriction is to separate the events.
+In the example above, this restriction can be achieved by separating the product cost event from the product attribute change event. Only Finance can subscribe to the cost event. 
+
+### Event Timing Restriction
+When can an event consumer see the event? For example, let us say that we want to develop a system that emits events for the stock market. The news of an impending IPO might need to be restricted by regulations till the time it is appropriate. 
+
+This restriction might be achieved by introducing a new event type. This event type is emitted only when the public must know about it.
+
+## Axiom 6 - Implicit vs. Explicit Events
 > Avoid expanding aggregate entities from other bounded contexts in your events
  
  Let us take the example of a Christmas sale. The sale applies to a group of products - for example product 1 and product2. Instead of dealing with too many products, the product domain allows setting up product groups. In this case we can set up a product group PG1 that contains product1 and product2.  The sale itself is set up against PG1 (and not against product1 and product2 individually) as part of the Promotion bounded context. Now let us say, the Promotion bounded context wants to send an event when a sale has been set up. It can choose to expand the product group to the constituent products when emitting out the event. Hence the Promotion domain sends this event with product1 and product2 (by expanding the PG1 group into the constituent products). However, there is a problem with this.
@@ -116,7 +131,7 @@ In case more than one bounded context is responsible to send out an event, then 
 
 But what if it is desired to have sale events at the product level even though they are set up at the product group level? Then we need to create a new subdomain which is responsible to emit this event.
 
-## Axiom 6 - Self Contained Events
+## Axiom 7 - Self Contained Events
 > Events must be self contained. There must be enough information in the event to act on it without needing an RPC call to the same bounded context.
 
 Remember, events are there to enhance availability. If events mandate RPC calls, then most of the problems with availability return back. Hence this should be avoided. 
