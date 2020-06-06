@@ -74,6 +74,10 @@ These are some of the questions that we will attempt to answer by stating what I
 This axiom guarantees that once an event is processed by an event consumer, then the effect of the processing will never need to be undone. New events might reverse the affect of an earlier event. However, the existing event  stays processed. Its effect is never undone.
 Example: Let us say that  every bank transaction in a savings bank account is sent as an event downstream. Let us also suppose that there was an event for INR 100 Dr. that is already sent. Subsequently it was realized that the event was sent in error and it should actually be INR 120 Dr. Now two events will be sent one for INR 100 Cr. followed by INR 120 Dr.  The new event will never mutate the earlier one. 
 
+### Corollaries
+> Since events are immutable they leave a traceable log
+> The only way to reverse an erroneous event that was sent previously is to generate a compensating event
+
 ## Axiom 2 - When should an event be sent?
 This axiom defines "when" the event gets sent. 
 > An event is sent when a change takes place in a [bounded context](https://www.infoq.com/news/2019/06/bounded-context-eric-evans/). 
