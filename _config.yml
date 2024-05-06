@@ -6,7 +6,7 @@ highlighter:      rouge
 title:            AjaTech.in
 tagline:          A company of experts
 description:      Reveal the Unborn
-url:              https://ajatech.in
+url:              https://ajatech.github.io
 baseurl:          /
                   # the optional subpath of your site, e.g. "/my-jekyll-site/"
                   # This will apply to all pages in your Jekyll site.
